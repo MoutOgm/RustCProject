@@ -6,3 +6,4 @@ CMakeCache.txt
 main
 lib/*
 rc_lib/Cargo.lock
+Makefile
