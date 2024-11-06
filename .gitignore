@@ -1,0 +1,8 @@
+rc_lib/target
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+.vscode
+main
+lib/*
+rc_lib/Cargo.lock
