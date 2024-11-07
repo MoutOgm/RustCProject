@@ -1,9 +1,6 @@
 #!/bin/bash
 cd ./rc_lib
 echo "-- building lib"
-if [ ! -d "./target/release/lib" ]; then
-    mkdir target/release/lib
-fi
 cargo build --all --release
 cargo run --release -p rc
 echo "-- copying *.a"
