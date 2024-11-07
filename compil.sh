@@ -1,15 +1,20 @@
 #!/bin/bash
 cd ./rc_lib
 echo "-- building lib"
-cargo build --release
-echo "-- copying lib"
+if [ ! -d "./target/release/lib" ]; then
+    mkdir target/release/lib
+fi
+cargo build --all --release
+cargo run --release -p rc
+echo "-- copying *.a"
 if [ ! -d "../lib" ]; then
     mkdir ../lib
 fi
-cp ./target/release/librc.a ../lib/
-echo "-- create header.hpp"
-cbindgen --config ../cbindgen.toml --crate rc --output ../cproject/includes/lib/rclib.hpp
+cp -v ./target/release/*.a ../lib/
+echo "-- cp *.hpp"
+cp -r ./target/release/lib ../cproject/includes
 cd ../
+echo "-- cmake"
 cmake ./
 make
 if [ $# -ne 0 ] && [ "$1" = "run" ]; then
