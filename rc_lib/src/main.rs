@@ -1,6 +1,6 @@
 use std::fs;
 fn main() {
-    
+
     let paths = fs::read_dir("./").unwrap();
     let uncrate = ["src".to_string(), "target".to_string()];
     for path in paths {
@@ -12,6 +12,9 @@ fn main() {
         cbindgen::Builder::new()
             .with_crate(crate_dir.to_string())
             .with_namespaces(&["rc".to_string(), crate_dir.to_string()])
+            .with_parse_expand(&[crate_dir.to_string()])
+            .with_no_includes()
+            .with_sys_include("cstdint")
             .generate()
             .expect("Unable to generate bindings")
             .write_to_file("target/release/lib/".to_owned() + &crate_dir + &".hpp");

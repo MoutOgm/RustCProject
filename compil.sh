@@ -11,9 +11,17 @@ cp -v ./target/release/*.a ../lib/
 echo "-- cp *.hpp"
 cp -r ./target/release/lib ../cproject/includes
 cd ../
+if [ $# -ne 0 ] && [ "$1" = "run" ] && [ -f "./main" ]; then
+    echo "-- remove old main"
+    rm ./main
+fi
 echo "-- cmake"
 cmake ./
 make
 if [ $# -ne 0 ] && [ "$1" = "run" ]; then
-    ./main
+    if [  -f "./main" ]; then
+        ./main
+        exit 1
+    fi
+    echo "Compilation echouée"
 fi
