@@ -16,8 +16,13 @@ file (GLOB SOURCES cproject/src/*.cpp)
 
 # compiles the files defined by SOURCES to generante the executable defined by EXEC
 add_executable(${EXEC} ${SOURCES})
-file(GLOB FILES false lib/*.a)
+if (WIN32)
+    file(GLOB FILES lib/*.lib)
+else()
+    file(GLOB FILES lib/*.a)
+endif()
+
 foreach(FILE ${FILES})
-    message("lib.a = ${FILE}")
+    message("Library file = ${FILE}")
     target_link_libraries(main ${FILE})
 endforeach()
