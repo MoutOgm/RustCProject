@@ -7,8 +7,8 @@ project(rcproject)
 # creates the variable EXEC and sets it to hello
 set(EXEC main)
 set (lib_dir ${CMAKE_SOURCE_DIR})
-# set the C++14 standard
-set(CMAKE_CXX_STANDARD 14)
+# set the C++17 standard
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(cproject/includes)
 
