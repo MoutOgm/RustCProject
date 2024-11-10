@@ -1,3 +1,4 @@
+use std::ffi;
 use std::ffi::c_char;
 use std::ffi::c_int;
 use std::ffi::CStr;
@@ -6,7 +7,7 @@ use std::slice;
 
 /// Function adding a int with another int and return an int
 #[no_mangle]
-pub extern fn add(a: i32, b: i32) -> i32 {
+pub extern fn add(a: ffi::c_int, b: ffi::c_int) -> ffi::c_int {
     a + b
 }
 

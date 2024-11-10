@@ -1,4 +1,3 @@
-#include <cstdint>
 
 namespace rc {
 namespace pointer {
