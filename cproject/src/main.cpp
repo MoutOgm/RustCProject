@@ -1,8 +1,9 @@
 #include <stdio.h>
-#include "lib/utils.hpp"
-#include "lib/gpu.hpp"
+#include "lib/utils.h"
+
 
 int main() {
-    rc::gpu::run();
+    rc::utils::T t = rc::utils::T {1, 2};
+    printf("add: %d\n", t.add());
     return 0;
 }

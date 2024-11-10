@@ -1,11 +1,4 @@
 [workspace]
-members = [ "gpu", "pointer","utils"]
-
-[package]
-name = "rc"
+members = ["utils"]
 resolver = "2"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-[dependencies]
-cbindgen = "0.27.0"
