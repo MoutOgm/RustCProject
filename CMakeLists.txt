@@ -7,8 +7,10 @@ project(rcproject)
 # set the C++17 standard
 set(CMAKE_CXX_STANDARD 17)
 
+set(LIB_PATTERN $<IF:$<PLATFORM_ID:Windows>,*.lib,*.a>)
+
 # Include directories
-include_directories(cproject/includes)
+include_directories(${CMAKE_SOURCE_DIR}/cproject/includes)
 
 # Find all source files
 file(GLOB SOURCES cproject/src/*.cpp)
@@ -26,35 +28,56 @@ add_custom_target(build_rust_lib ALL
 # Ensure the Rust library is built before linking
 add_dependencies(main build_rust_lib)
 
-# Copy the Rust library files to the lib directory
+# Fonction pour trouver les bibliothèques Rust
+function(find_rust_libs OUTPUT_LIBS)
+    file(GLOB_RECURSE RUST_LIBS
+        ${CMAKE_SOURCE_DIR}/rc_lib/target/release/*.lib
+        ${CMAKE_SOURCE_DIR}/rc_lib/target/release/*.a
+    )
+    set(${OUTPUT_LIBS} ${RUST_LIBS} PARENT_SCOPE)
+endfunction()
+
+# Trouver toutes les bibliothèques Rust
+find_rust_libs(RUST_LIBRARIES)
+
+
+# Copier les fichiers
 add_custom_command(TARGET build_rust_lib POST_BUILD
+    # Créer les répertoires
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/lib
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/rc_lib/target/release/lib ${CMAKE_SOURCE_DIR}/cproject/includes
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-        $<IF:$<PLATFORM_ID:Windows>,
-            ${CMAKE_SOURCE_DIR}/rc_lib/target/release/*.lib,
-            ${CMAKE_SOURCE_DIR}/rc_lib/target/release/*.a>
-        ${CMAKE_SOURCE_DIR}/lib
-    COMMENT "Copying Rust library files"
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/cproject/includes/lib
+
+    # Copier tous les fichiers d'en-tête
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/rc_lib/target/cxxbridge/*.hpp
+        ${CMAKE_SOURCE_DIR}/cproject/includes/lib/
+
+
+
+    # Copier toutes les bibliothèques
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_SOURCE_DIR}/rc_lib/target/release/${LIB_PATTERN}
+        ${CMAKE_SOURCE_DIR}/lib/
+    COMMENT "Copying Rust libraries and headers"
 )
 
-# Link the Rust library files to the executable
+
+# Lier les bibliothèques
 if (WIN32)
-    file(GLOB FILES lib/*.lib)
+    file(GLOB LIBS ${CMAKE_SOURCE_DIR}/lib/*.lib)
 else()
-    file(GLOB FILES lib/*.a)
+    file(GLOB LIBS ${CMAKE_SOURCE_DIR}/lib/*.a)
 endif()
 
-foreach(FILE ${FILES})
-    message("Library file = ${FILE}")
-    target_link_libraries(main ${FILE})
+foreach(LIB ${LIBS})
+    get_filename_component(LIB_NAME ${LIB} NAME)
+    message("Linking library: ${LIB_NAME}")
+    target_link_libraries(main PRIVATE ${LIB})
 endforeach()
 
 # Optionally run the executable after building
 add_custom_target(run ALL
     DEPENDS main
-    COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/main
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:main> ${CMAKE_BINARY_DIR}/main
     COMMAND ${CMAKE_BINARY_DIR}/main
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMENT "Running the executable"

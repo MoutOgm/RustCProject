@@ -9,4 +9,4 @@ rc_lib/Cargo.lock
 Makefile
 compile_commands.json
 .cache
-cproject/inclues/lib/*
+cproject/includes/lib/*
