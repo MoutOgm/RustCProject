@@ -18,10 +18,13 @@ add_executable(main ${SOURCES})
 
 # Function to build the Rust library
 add_custom_target(build_rust_lib ALL
-    COMMAND cargo build --manifest-path ${CMAKE_SOURCE_DIR}/rc_lib/Cargo.toml --release
+    COMMAND cargo build --manifest-path ${CMAKE_SOURCE_DIR}/rc_lib/Cargo.toml --release --all
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/rc_lib
     COMMENT "Building Rust library"
 )
+
+# Ensure the Rust library is built before linking
+add_dependencies(main build_rust_lib)
 
 # Copy the Rust library files to the lib directory
 add_custom_command(TARGET build_rust_lib POST_BUILD
