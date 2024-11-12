@@ -15,7 +15,6 @@ is_windows() {
 cd ./rc_lib
 echo "-- building lib"
 cargo build --all --release
-cargo run --release -p rc
 echo "-- copying *.a"
 
 if [ ! -d "../lib" ]; then
@@ -29,7 +28,8 @@ else
 fi
 
 echo "-- cp *.hpp"
-cp -r ./target/release/lib ../cproject/includes
+cp ./target/cxxbridge/utils.h ../cproject/includes/lib
+
 cd ../
 
 if [ $# -ne 0 ] && [ "$1" = "run" ] && [ -f "./main" ]; then

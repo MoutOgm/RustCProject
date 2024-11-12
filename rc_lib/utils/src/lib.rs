@@ -1,46 +1,22 @@
-use std::ffi;
-use std::ffi::c_char;
-use std::ffi::c_int;
-use std::ffi::CStr;
-use std::slice;
+#[cxx::bridge(namespace = "rc::utils")]
+mod ffi {
 
-
-/// Function adding a int with another int and return an int
-#[no_mangle]
-pub extern fn add(a: ffi::c_int, b: ffi::c_int) -> ffi::c_int {
-    a + b
-}
-
-macro_rules! create_print {
-    ($func_name:ident, $ty:ty) => {
-        #[no_mangle]
-        pub extern "C" fn $func_name(text: *const c_char, values: $ty) {
-            unsafe {
-                if let Ok(str) = CStr::from_ptr(text).to_str() {
-                    let vec = str.split("{}").collect::<Vec<&str>>();
-                    let vec_values = slice::from_raw_parts(values, vec.len()-1);
-                    for i in 0..vec.len()-1 {
-                        print!("{}{}", vec[i], vec_values[i]);
-                    }
-                    println!("{}", vec.last().unwrap());
-                } else {
-                    panic!("Error print text")
-                }
-            }
-        }
-    };
-}
-create_print!(print_str, *const c_char);
-create_print!(print_int, *const c_int);
-create_print!(print_bool, *const bool);
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    struct T {
+        a: i32,
+        b: i32,
     }
+
+    extern "Rust" {
+        fn add(self: &T) -> i32;
+        fn n() -> T;
+    }
+}
+
+impl ffi::T {
+    fn add(&self) -> i32 {
+        self.a + self.b
+    }
+}
+fn n() -> ffi::T {
+    ffi::T { a: 1, b: 2 }
 }
