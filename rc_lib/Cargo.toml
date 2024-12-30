@@ -1,4 +1,4 @@
 [workspace]
-members = ["utils"]
+members = [ "error_manager","utils"]
 resolver = "2"
 edition = "2021"
